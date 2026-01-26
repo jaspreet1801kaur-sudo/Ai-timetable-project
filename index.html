@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weekly Focus Planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="container">
+
+  <!-- PROGRESS BAR -->
+  <div class="progress"><div id="bar" class="progress-bar"></div></div>
+
+  <!-- AUTH SLIDE -->
+  <div class="slide active card" id="authSlide">
+    <h2>Welcome</h2>
+    <p style="opacity:.8;margin-bottom:20px">Focus system for students</p>
+
+    <div id="authButtons">
+      <button id="newUserBtn" class="primary">New User</button>
+      <button id="existingUserBtn" class="secondary">Existing User</button>
+    </div>
+
+    <div id="newUserForm" style="display:none;margin-top:20px">
+      <input id="userName" placeholder="Your name">
+      <input id="userIntent" placeholder="Your intention">
+      <input id="userPin" placeholder="Create 4-digit PIN" maxlength="4" type="password">
+      <button id="createBtn" class="primary">Create & Enter</button>
+    </div>
+
+    <div id="existingUserForm" style="display:none;margin-top:20px">
+      <input id="loginPin" placeholder="Enter your PIN" maxlength="4" type="password">
+      <button id="loginBtn" class="primary">Enter</button>
+    </div>
+  </div>
+
+  <!-- PLANNER SLIDE 1 -->
+  <div class="slide card">
+    <h2>Main Focus Day</h2>
+    <select id="mainDay">
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+      <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+    </select>
+    <div class="nav">
+      <span></span>
+      <button class="primary" id="next1">Next</button>
+    </div>
+  </div>
+
+  <!-- PLANNER SLIDE 2: Goals -->
+  <div class="slide card">
+    <h2>Add Weekly Goals</h2>
+    <input id="goalInput" placeholder="Example: Improve Health">
+    <label>Pick Goal Color</label>
+    <input type="color" id="goalColor" value="#4CAF50">
+    <button class="primary" id="addGoalBtn">Add Goal</button>
+    <div id="goals"></div>
+    <div class="nav">
+      <button class="secondary" id="back1">Back</button>
+      <button class="primary" id="next2">Next</button>
+    </div>
+  </div>
+
+  <!-- PLANNER SLIDE 3: Tasks -->
+  <div class="slide card">
+    <h2>Add Tasks per Goal</h2>
+    <div id="tasksArea"></div>
+    <p><b>Task Effort Level</b> helps AI calculate mental load.</p>
+    <div class="nav">
+      <button class="secondary" id="back2">Back</button>
+      <button class="primary" id="next3">Next</button>
+    </div>
+  </div>
+
+  <!-- PLANNER SLIDE 4: Batching -->
+  <div class="slide card">
+    <h2>Task Batching & Focus Task</h2>
+    <p>Select which days you will do each task</p>
+    <div id="batchArea"></div>
+    <label>Main Focus Task of the Week</label>
+    <input id="focusTask" placeholder="Example: Daily Walk / Revision">
+    <div class="nav">
+      <button class="secondary" id="back3">Back</button>
+      <button class="primary" id="next4">Next</button>
+    </div>
+  </div>
+
+  <!-- PLANNER SLIDE 5: Reward & Mood -->
+  <div class="slide card">
+    <h2>Reward, Punishment & Mood</h2>
+    <input id="reward" placeholder="Reward (Example: Watch a movie)">
+    <input id="punishment" placeholder="Punishment (Example: No social media)">
+    <label>How do you usually feel while doing tasks?</label>
+    <select id="mood">
+      <option>Energized</option>
+      <option>Normal</option>
+      <option>Tired</option>
+      <option>Stressed</option>
+    </select>
+    <div class="nav">
+      <button class="secondary" id="back4">Back</button>
+      <button class="primary" id="generateBtn">Generate</button>
+    </div>
+  </div>
+
+  <!-- PLANNER SLIDE 6: Timetable -->
+  <div class="slide card">
+    <h2>Your Weekly Timetable</h2>
+    <div class="timetable" id="table"></div>
+    <h3>AI Suggestions</h3>
+    <div id="aiSuggestion" class="card"></div>
+    <h3 style="margin-top:24px">Color Legend</h3>
+    <div id="legend" class="legend"></div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
