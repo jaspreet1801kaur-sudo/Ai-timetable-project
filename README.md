@@ -1,3 +1,3 @@
-## Improvements
-- Enhanced UI structure
-- Better readability
+## UI Improvements
+- Improved layout structure
+- Better visual clarity
