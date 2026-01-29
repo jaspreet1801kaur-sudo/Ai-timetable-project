@@ -256,76 +256,39 @@ function getRandomColor() {
 }
 
 /* ==================== AI TASK GENERATION ==================== */
-async function generateTasksWithAI(index) {
+function generateTasksWithAI(index) {
   const goal = goals[index];
   const statusEl = document.getElementById(`aiStatus${index}`);
   const textarea = document.getElementById(`tasks${index}`);
-  
+
   statusEl.innerHTML = `
     <div class="ai-loading">
       <span class="spinner"></span>
-      <span>AI is generating tasks for "${goal.name}"...</span>
+      <span>Generating smart tasks for "${goal.name}"...</span>
     </div>
   `;
-  
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
-        messages: [{
-          role: "user",
-          content: `You are a student productivity expert. Break down this weekly goal into 5-7 specific, actionable tasks.
 
-Goal: "${goal.name}"
+  setTimeout(() => {
+    const demoTasks = [
+      `• Study basics of ${goal.name} for 45 mins`,
+      `• Watch one tutorial and make notes`,
+      `• Practice 10 related problems`,
+      `• Revise key concepts (30 mins)`,
+      `• Small project or practical task (1 hour)`
+    ].join("\n");
 
-Requirements:
-- Each task should be realistic (30 mins - 2 hours)
-- Include variety: studying, practice, projects, review
-- Make tasks concrete and measurable
-- Consider student energy levels
-- Format: One task per line, starting with •
+    textarea.value = demoTasks;
 
-Example format:
-• Study chapter concepts for 1 hour
-• Complete 10 practice problems
-• Create summary notes (30 mins)
-• Review with flashcards (45 mins)
-• Take practice quiz
-
-Now generate tasks for the goal above:`
-        }]
-      })
-    });
-
-    const data = await response.json();
-    const tasks = data.content[0].text.trim();
-    
-    textarea.value = tasks;
     statusEl.innerHTML = `
       <div class="ai-success">
         <span>✅</span>
         <span>Tasks generated successfully!</span>
       </div>
     `;
-    
+
     setTimeout(() => statusEl.innerHTML = "", 3000);
-    showNotification("AI generated tasks successfully!", "success");
-    
-  } catch (error) {
-    console.error('AI generation failed:', error);
-    statusEl.innerHTML = `
-      <div class="ai-error">
-        <span>❌</span>
-        <span>AI generation failed. Please add tasks manually.</span>
-      </div>
-    `;
-    showNotification("AI generation failed. Try adding tasks manually.", "error");
-  }
+    showNotification("AI generated demo tasks!", "success");
+  }, 1200);
 }
 
 /* ==================== TASK BATCHING ==================== */
@@ -774,72 +737,6 @@ document.getElementById("importBtn").addEventListener("click", () => {
 document.getElementById("importFile").addEventListener("change", importPlan);
 document.getElementById("printBtn").addEventListener("click", printPlan);
 document.getElementById("resetBtn").addEventListener("click", resetPlanner);
-
-function renderTasks(goals){
-  const tasksArea = document.getElementById("tasksArea");
-  tasksArea.innerHTML = "";
-
-  goals.forEach(goal => {
-    const box = document.createElement("div");
-    box.className = "goal-task-box";
-
-    box.innerHTML = `
-      <h3>${goal.name}</h3>
-
-      <button class="ai-generate-btn">✨ Generate Tasks with AI</button>
-
-      <div class="ai-status" style="display:none"></div>
-
-      <textarea class="taskInput"
-        placeholder="Add tasks manually (one per line)"></textarea>
-
-      <div class="task-tips">
-        💡 Tip: Be specific (e.g., “Solve 20 numericals” not just “Physics”)
-      </div>
-    `;
-
-    const btn = box.querySelector(".ai-generate-btn");
-    const textarea = box.querySelector(".taskInput");
-    const status = box.querySelector(".ai-status");
-
-    btn.addEventListener("click", () => {
-      generateAITasks(goal.name, textarea, status);
-    });
-
-    tasksArea.appendChild(box);
-  });
-}
-async function generateAITasks(goalName, textarea, statusBox) {
-  statusBox.style.display = "block";
-  statusBox.className = "ai-status ai-loading";
-  statusBox.innerHTML = "⏳ Generating tasks with AI...";
-
-  try {
-    const response = await fetch("YOUR_API_URL_HERE", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        goal: goalName
-      })
-    });
-
-    const data = await response.json();
-
-    // assume API returns array of tasks
-    const tasks = data.tasks || [];
-
-    textarea.value = tasks.join("\n");
-
-    statusBox.className = "ai-status ai-success";
-    statusBox.innerHTML = "✅ Tasks generated successfully!";
-  } catch (error) {
-    statusBox.className = "ai-status ai-error";
-    statusBox.innerHTML = "❌ Failed to generate tasks";
-    console.error(error);
-  }
-}
 /* ==================== INITIALIZATION ==================== */
 updateUI();
 
