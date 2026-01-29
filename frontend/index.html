@@ -16,7 +16,10 @@
     <h1>✨ AI Focus Planner</h1>
     <p class="subtitle">Smart weekly planning for students</p>
     <div id="userProfile" style="display:none" class="user-profile">
+      <img id="userAvatar" style="width:32px;height:32px;border-radius:50%;margin-right:8px;display:none" alt="avatar">
       <span id="userNameDisplay"></span>
+      <button id="profileBtn" class="btn-logout" style="background:var(--primary);margin-left:8px">Profile</button>
+      <button id="analyticsBtn" class="btn-logout" style="background:var(--success);margin-left:8px">Analytics</button>
       <button id="logoutBtn" class="btn-logout">Logout</button>
     </div>
   </div>
@@ -48,6 +51,14 @@
           <input id="userName" placeholder="Enter your name" autocomplete="off">
         </div>
         <div class="input-group">
+          <label>Username</label>
+          <input id="userUsername" placeholder="Choose a username" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label>Email (Optional)</label>
+          <input id="userEmail" type="email" placeholder="your@email.com" autocomplete="off">
+        </div>
+        <div class="input-group">
           <label>Your Intention</label>
           <input id="userIntent" placeholder="e.g., Excel in academics">
         </div>
@@ -63,6 +74,10 @@
       <div id="existingUserForm" class="auth-form">
         <h3>Welcome Back!</h3>
         <div id="userGreeting" class="user-greeting"></div>
+        <div class="input-group">
+          <label>Username</label>
+          <input id="loginUsername" placeholder="Enter your username" autocomplete="off">
+        </div>
         <div class="input-group">
           <label>Enter Your PIN</label>
           <input id="loginPin" placeholder="Enter 4-digit PIN" maxlength="4" type="password" inputmode="numeric">
@@ -253,6 +268,73 @@
     <input type="file" id="importFile" accept=".json" style="display:none">
   </div>
 
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" id="closeProfileModal">×</span>
+    <h2>👤 Your Profile</h2>
+    <div class="profile-avatar-section">
+      <img id="profileAvatar" src="" alt="Avatar" class="profile-avatar-img">
+      <button id="uploadAvatarBtn" class="secondary btn-small">Upload Avatar</button>
+      <input type="file" id="avatarUpload" accept="image/*" style="display:none">
+    </div>
+    <div class="input-group">
+      <label>Name</label>
+      <input id="profileName" placeholder="Your name">
+    </div>
+    <div class="input-group">
+      <label>Username</label>
+      <input id="profileUsername" placeholder="Your username">
+    </div>
+    <div class="input-group">
+      <label>Email</label>
+      <input id="profileEmail" type="email" placeholder="your@email.com">
+    </div>
+    <div class="input-group">
+      <label>Intention</label>
+      <input id="profileIntent" placeholder="Your intention">
+    </div>
+    <div class="input-group">
+      <label>Change PIN (Optional)</label>
+      <input id="profilePin" type="password" maxlength="4" placeholder="New 4-digit PIN">
+    </div>
+    <button id="saveProfileBtn" class="primary btn-large">Save Changes</button>
+  </div>
+</div>
+
+<!-- Analytics Modal -->
+<div id="analyticsModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" id="closeAnalyticsModal">×</span>
+    <h2>📊 Your Analytics</h2>
+    
+    <div class="analytics-stats">
+      <div class="stat-card">
+        <div class="stat-number" id="completedTasks">0</div>
+        <div class="stat-label">Completed Tasks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalTasks">0</div>
+        <div class="stat-label">Total Tasks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="completionRate">0%</div>
+        <div class="stat-label">Completion Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="streak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:30px; color:var(--primary)">Goals Progress</h3>
+    <div id="goalsBreakdown" class="goals-breakdown"></div>
+
+    <h3 style="margin-top:30px; color:var(--primary)">Weekly Activity</h3>
+    <div id="weeklyActivity" class="weekly-activity"></div>
+  </div>
 </div>
 
 <!-- Notification Container -->
