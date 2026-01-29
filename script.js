@@ -775,6 +775,71 @@ document.getElementById("importFile").addEventListener("change", importPlan);
 document.getElementById("printBtn").addEventListener("click", printPlan);
 document.getElementById("resetBtn").addEventListener("click", resetPlanner);
 
+function renderTasks(goals){
+  const tasksArea = document.getElementById("tasksArea");
+  tasksArea.innerHTML = "";
+
+  goals.forEach(goal => {
+    const box = document.createElement("div");
+    box.className = "goal-task-box";
+
+    box.innerHTML = `
+      <h3>${goal.name}</h3>
+
+      <button class="ai-generate-btn">✨ Generate Tasks with AI</button>
+
+      <div class="ai-status" style="display:none"></div>
+
+      <textarea class="taskInput"
+        placeholder="Add tasks manually (one per line)"></textarea>
+
+      <div class="task-tips">
+        💡 Tip: Be specific (e.g., “Solve 20 numericals” not just “Physics”)
+      </div>
+    `;
+
+    const btn = box.querySelector(".ai-generate-btn");
+    const textarea = box.querySelector(".taskInput");
+    const status = box.querySelector(".ai-status");
+
+    btn.addEventListener("click", () => {
+      generateAITasks(goal.name, textarea, status);
+    });
+
+    tasksArea.appendChild(box);
+  });
+}
+async function generateAITasks(goalName, textarea, statusBox) {
+  statusBox.style.display = "block";
+  statusBox.className = "ai-status ai-loading";
+  statusBox.innerHTML = "⏳ Generating tasks with AI...";
+
+  try {
+    const response = await fetch("YOUR_API_URL_HERE", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        goal: goalName
+      })
+    });
+
+    const data = await response.json();
+
+    // assume API returns array of tasks
+    const tasks = data.tasks || [];
+
+    textarea.value = tasks.join("\n");
+
+    statusBox.className = "ai-status ai-success";
+    statusBox.innerHTML = "✅ Tasks generated successfully!";
+  } catch (error) {
+    statusBox.className = "ai-status ai-error";
+    statusBox.innerHTML = "❌ Failed to generate tasks";
+    console.error(error);
+  }
+}
 /* ==================== INITIALIZATION ==================== */
 updateUI();
 
