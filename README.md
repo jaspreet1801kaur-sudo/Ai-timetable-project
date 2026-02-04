@@ -7,7 +7,7 @@
 
 ---
 
-## 🎯 Overview
+## 🎯 Overview:
 
 The **AI Weekly Focus Planner** is a next-generation productivity tool built for students who want to:
 
