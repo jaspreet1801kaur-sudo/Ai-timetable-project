@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
 
 // Import AI modules
 const { checkFeasibility } = require('../ai/feasibilityCheck');
@@ -9,10 +8,19 @@ const { generateWeeklyReflection } = require('../ai/weeklyReflection');
 const { checkOverthinking } = require('../ai/overthinkingGuard');
 const { callAI } = require('../ai/aiAPI');
 
-// ===========================================
-// AI TASK GENERATION
-// ===========================================
-router.post('/generate-tasks', protect, async (req, res) => {
+/*
+|--------------------------------------------------------------------------
+| AI ROUTES – PHASE 2
+| - Authentication DISABLED
+| - Database DISABLED
+| - Pure AI testing
+|--------------------------------------------------------------------------
+*/
+
+/* ==========================================
+   AI TASK GENERATION
+========================================== */
+router.post('/generate-tasks', async (req, res) => {
   try {
     const { goalName, goalCategory } = req.body;
 
@@ -35,14 +43,7 @@ Requirements:
 - Consider student energy levels
 - Format: One task per line, starting with •
 
-Example:
-• Study chapter concepts for 1 hour
-• Complete 10 practice problems
-• Create summary notes (30 mins)
-• Review with flashcards (45 mins)
-• Take practice quiz
-
-Generate tasks now:`;  
+Generate tasks now:`;
 
     const aiResponse = await callAI(prompt);
 
@@ -55,8 +56,7 @@ Generate tasks now:`;
     res.json({
       success: true,
       goalName,
-      tasks,
-      rawResponse: aiResponse
+      tasks
     });
 
   } catch (error) {
@@ -69,10 +69,10 @@ Generate tasks now:`;
   }
 });
 
-// ===========================================
-// FEASIBILITY CHECK
-// ===========================================
-router.post('/check-feasibility', protect, async (req, res) => {
+/* ==========================================
+   FEASIBILITY CHECK
+========================================== */
+router.post('/check-feasibility', async (req, res) => {
   try {
     const weeklyPlan = req.body;
 
@@ -96,10 +96,10 @@ router.post('/check-feasibility', protect, async (req, res) => {
   }
 });
 
-// ===========================================
-// TASK DOWNGRADE SUGGESTION
-// ===========================================
-router.post('/suggest-downgrade', protect, async (req, res) => {
+/* ==========================================
+   TASK DOWNGRADE SUGGESTION
+========================================== */
+router.post('/suggest-downgrade', async (req, res) => {
   try {
     const { taskName, difficulty, missedCount } = req.body;
 
@@ -128,10 +128,10 @@ router.post('/suggest-downgrade', protect, async (req, res) => {
   }
 });
 
-// ===========================================
-// WEEKLY REFLECTION
-// ===========================================
-router.post('/weekly-reflection', protect, async (req, res) => {
+/* ==========================================
+   WEEKLY REFLECTION
+========================================== */
+router.post('/weekly-reflection', async (req, res) => {
   try {
     const weekData = req.body;
 
@@ -155,10 +155,10 @@ router.post('/weekly-reflection', protect, async (req, res) => {
   }
 });
 
-// ===========================================
-// OVERTHINKING GUARD
-// ===========================================
-router.post('/check-overthinking', protect, async (req, res) => {
+/* ==========================================
+   OVERTHINKING GUARD
+========================================== */
+router.post('/check-overthinking', async (req, res) => {
   try {
     const { editCount, daysInactive } = req.body;
 
@@ -186,10 +186,10 @@ router.post('/check-overthinking', protect, async (req, res) => {
   }
 });
 
-// ===========================================
-// AI INSIGHTS
-// ===========================================
-router.post('/get-insights', protect, async (req, res) => {
+/* ==========================================
+   AI INSIGHTS
+========================================== */
+router.post('/get-insights', async (req, res) => {
   try {
     const { dailyTasks, mainFocusDay, mood } = req.body;
 

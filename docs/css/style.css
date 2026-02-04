@@ -106,13 +106,24 @@ body {
   box-shadow: 0 20px 50px var(--shadow);
 }
 
-/* ==================== SLIDES ==================== */
+/* ==================== SLIDES - CRITICAL FIX ==================== */
 .slide {
-  display: none;
+  display: none !important;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
 }
 
 .slide.active {
-  display: block;
+  display: block !important;
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  pointer-events: auto;
   animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1350,3 +1361,4 @@ button:disabled {
     border: 1px solid #ddd !important;
     page-break-inside: avoid;
   }
+}
