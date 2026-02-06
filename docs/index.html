@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Weekly Focus Planner - Student Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI-powered weekly task planner for students with smart scheduling and workload management">
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>✨ AI Focus Planner</h1>
+    <p class="subtitle">Smart weekly planning for students</p>
+    <div id="userProfile" style="display:none" class="user-profile">
+      <img id="userAvatar" style="width:32px;height:32px;border-radius:50%;margin-right:8px;display:none" alt="avatar">
+      <span id="userNameDisplay"></span>
+      <button id="profileBtn" class="btn-logout" style="background:var(--primary);margin-left:8px">Profile</button>
+      <button id="analyticsBtn" class="btn-logout" style="background:var(--success);margin-left:8px">Analytics</button>
+      <button id="logoutBtn" class="btn-logout">Logout</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress"><div id="bar" class="progress-bar"></div></div>
+
+  <!-- SLIDE 0: AUTH -->
+  <div class="slide active card" id="authSlide">
+    <div class="auth-container">
+      <h2>🎯 Welcome to Your Focus System</h2>
+      <p class="auth-subtitle">Plan smarter, achieve more</p>
+
+      <div id="authButtons" class="auth-buttons">
+        <button id="newUserBtn" class="primary btn-large">
+          <span class="btn-icon">👤</span>
+          New User
+        </button>
+        <button id="existingUserBtn" class="secondary btn-large">
+          <span class="btn-icon">🔐</span>
+          Existing User
+        </button>
+      </div>
+
+      <div id="newUserForm" class="auth-form" style="display:none;">
+        <h3>Create Your Account</h3>
+        <div id="userGreeting"></div>
+
+        <div class="input-group">
+          <label>Your Name</label>
+          <input id="userName" placeholder="Enter your name">
+        </div>
+
+        <div class="input-group">
+          <label>Username</label>
+          <input id="userUsername" placeholder="Choose a username">
+        </div>
+
+        <div class="input-group">
+          <label>Email (Optional)</label>
+          <input id="userEmail" type="email" placeholder="your@email.com">
+        </div>
+
+        <div class="input-group">
+          <label>Your Intention</label>
+          <input id="userIntent" placeholder="e.g., Excel in academics">
+        </div>
+
+        <div class="input-group">
+          <label>Create 4-Digit PIN</label>
+          <input id="userPin" maxlength="4" type="password" inputmode="numeric" placeholder="Create PIN">
+          <small>Remember this PIN - you'll need it to access your plans</small>
+        </div>
+
+        <button id="createBtn" class="primary btn-large">Create & Start Planning</button>
+        <button id="backToAuth1" class="secondary btn-small">Back</button>
+      </div>
+
+      <div id="existingUserForm" class="auth-form" style="display:none;">
+        <h3>Welcome Back!</h3>
+        <div id="userGreeting"></div>
+        <div class="input-group">
+          <label>Username</label>
+          <input id="loginUsername" placeholder="Enter your username">
+        </div>
+
+        <div class="input-group">
+          <label>Enter Your PIN</label>
+          <input id="loginPin" maxlength="4" type="password" inputmode="numeric" placeholder="Enter 4-digit PIN">
+        </div>
+
+        <button id="loginBtn" class="primary btn-large">Enter Your Workspace</button>
+        <button id="backToAuth2" class="secondary btn-small">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: INTENTION -->
+  <div class="slide card">
+    <h2>🎯 Step 1: Define Your Intention</h2>
+    <p class="slide-description">What is the primary academic or personal intention for this week?</p>
+    
+    <div class="input-group">
+      <label>My intention is to...</label>
+      <input id="intention" value="Excel in my studies and complete all assignments on time.">
+    </div>
+
+    <div class="nav">
+      <button class="secondary btn-nav" style="visibility:hidden">Back</button>
+      <button id="next1" class="primary btn-nav">Next: Set Goals →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: GOALS -->
+  <div class="slide card">
+    <h2>🎯 Step 2: Set Your Weekly Goals</h2>
+    <p class="slide-description">Break down your intention into actionable goals.</p>
+
+    <div class="goal-input-section">
+      <div class="input-row">
+        <div class="input-group flex-grow">
+          <label for="goalInput">Goal Name</label>
+          <input id="goalInput" placeholder="e.g., Master DSA Chapter 5">
+        </div>
+        <div class="input-group">
+          <label for="goalColor">Color</label>
+          <input id="goalColor" type="color" value="#38bdf8" class="color-picker">
+        </div>
+        <button id="addGoalBtn" class="primary" style="align-self: flex-end;">Add Goal</button>
+      </div>
+    </div>
+    
+    <div id="goals" class="goals-container"></div>
+
+    <div class="nav">
+      <button id="back1" class="secondary btn-nav">← Back</button>
+      <button id="next2" class="primary btn-nav">Next: Add Tasks →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: TASKS -->
+  <div class="slide card">
+    <h2>🎯 Step 3: Add Tasks to Your Goals</h2>
+    <p class="slide-description">List the specific tasks required to achieve each goal. Use our AI to generate smart tasks!</p>
+    
+    <div id="tasksArea" class="tasks-container"></div>
+    
+    <div class="nav">
+      <button id="back2" class="secondary btn-nav">← Back</button>
+      <button id="next3" class="primary btn-nav">Next: Schedule →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: BATCHING -->
+  <div class="slide card">
+    <h2>🎯 Step 4: Schedule Your Tasks</h2>
+    <p class="slide-description">Assign your tasks to specific days of the week.</p>
+    
+    <div id="batchArea" class="batch-container"></div>
+    
+    <div class="nav">
+      <button id="back3" class="secondary btn-nav">← Back</button>
+      <button id="next4" class="primary btn-nav">Next: Motivation →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: MOTIVATION -->
+  <div class="slide card">
+    <h2>🎯 Step 5: Set Your Motivation</h2>
+    <p class="slide-description">Establish rewards and consequences to stay on track.</p>
+    
+    <div class="motivation-grid">
+      <div class="input-group">
+        <label for="focusTask" class="label-highlight">⭐ What is your single most important task this week?</label>
+        <input id="focusTask" placeholder="e.g., Finish the history essay">
+      </div>
+      
+      <div class="input-group">
+        <label for="reward" class="label-success">🏆 Reward for completing all tasks</label>
+        <input id="reward" placeholder="e.g., Watch a new movie">
+      </div>
+
+      <div class="input-group">
+        <label for="punishment" class="label-danger">💔 Consequence for not completing tasks</label>
+        <input id="punishment" placeholder="e.g., No video games for a day">
+      </div>
+
+      <div class="input-group">
+        <label for="mainDay">🗓️ What is your main focus day?</label>
+        <select id="mainDay" class="select-large">
+          <option>Monday</option>
+          <option>Tuesday</option>
+          <option>Wednesday</option>
+          <option>Thursday</option>
+          <option>Friday</option>
+          <option>Saturday</option>
+          <option>Sunday</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="mood">🙂 How are you feeling about this week?</label>
+        <select id="mood" class="select-large">
+          <option value="energized">Energized and ready</option>
+          <option value="neutral">Neutral</option>
+          <option value="stressed">A bit stressed</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="nav">
+      <button id="back4" class="secondary btn-nav">← Back</button>
+      <button id="generateBtn" class="primary btn-nav">Generate My Plan! →</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: TIMETABLE -->
+  <div class="slide card">
+    <h2>📅 Your AI-Generated Weekly Plan</h2>
+
+    <div class="plan-header">
+      <div class="reward-display"><strong>Reward:</strong> <span id="rewardDisplay"></span></div>
+      <div class="punishment-display"><strong>Consequence:</strong> <span id="punishmentDisplay"></span></div>
+    </div>
+    
+    <div id="table" class="timetable"></div>
+
+    <div class="ai-insights-section">
+      <h3>🤖 AI Insights & Suggestions</h3>
+      <div id="aiSuggestion" class="ai-card"></div>
+    </div>
+
+    <div class="legend-section">
+      <h3>🎨 Legend</h3>
+      <div id="legend" class="legend"></div>
+    </div>
+
+    <div class="action-buttons">
+      <button id="printBtn" class="secondary btn-action">🖨️ Print</button>
+      <button id="exportBtn" class="secondary btn-action">📥 Export</button>
+      <button id="importBtn" class="secondary btn-action">📤 Import</button>
+      <button id="resetBtn" class="danger btn-action">🔄 Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODALS -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <span id="closeProfileModal" class="modal-close">&times;</span>
+    <h2>My Profile</h2>
+    
+    <div class="profile-avatar-section">
+      <img id="profileAvatar" class="profile-avatar-img" src="" alt="Avatar">
+      <input type="file" id="avatarUpload" accept="image/*" style="display:none;">
+      <button id="uploadAvatarBtn" class="secondary btn-small">Upload New Avatar</button>
+    </div>
+
+    <div class="input-group"><label>Name</label><input id="profileName"></div>
+    <div class="input-group"><label>Username</label><input id="profileUsername"></div>
+    <div class="input-group"><label>Email</label><input id="profileEmail" type="email"></div>
+    <div class="input-group"><label>Intention</label><input id="profileIntent"></div>
+    <div class="input-group">
+      <label>New PIN (optional)</label>
+      <input id="profilePin" type="password" maxlength="4" placeholder="Enter new 4-digit PIN">
+    </div>
+    <button id="saveProfileBtn" class="primary btn-large">Save Changes</button>
+  </div>
+</div>
+
+<div id="analyticsModal" class="modal">
+  <div class="modal-content">
+    <span id="closeAnalyticsModal" class="modal-close">&times;</span>
+    <h2>My Analytics</h2>
+    
+    <div class="analytics-stats">
+      <div class="stat-card">
+        <div id="completedTasks" class="stat-number">0</div>
+        <div class="stat-label">Tasks Completed</div>
+      </div>
+      <div class="stat-card">
+        <div id="totalTasks" class="stat-number">0</div>
+        <div class="stat-label">Total Tasks</div>
+      </div>
+      <div class="stat-card">
+        <div id="completionRate" class="stat-number">0%</div>
+        <div class="stat-label">Completion Rate</div>
+      </div>
+      <div class="stat-card">
+        <div id="streak" class="stat-number">0</div>
+        <div class="stat-label">🔥 Daily Streak</div>
+      </div>
+    </div>
+    
+    <h3>Goal Progress</h3>
+    <div id="goalsBreakdown" class="goals-breakdown"></div>
+    
+    <h3 style="margin-top:24px">Weekly Activity</h3>
+    <div id="weeklyActivity" class="weekly-activity"></div>
+  </div>
+</div>
+
+<!-- Notification Container -->
+<div id="notificationContainer"></div>
+
+<script src="Js/script.js"></script>
+</body>
+</html>
