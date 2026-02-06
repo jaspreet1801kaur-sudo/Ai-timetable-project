@@ -7,48 +7,48 @@
 
 ---
 
-## í¾¯ Overview:
+## ï¿½ï¿½ï¿½ Overview:
 
 The **AI Weekly Focus Planner** is a next-generation productivity tool built for students who want to:
 
-- í³Š **Plan smarter** with AI-generated task breakdowns
-- í¾¨ **Organize visually** with color-coded goals and tasks
-- í´– **Get insights** from AI analysis of workload and schedule
+- ï¿½ï¿½ï¿½ **Plan smarter** with AI-generated task breakdowns
+- ï¿½ï¿½ï¿½ **Organize visually** with color-coded goals and tasks
+- ï¿½ï¿½ï¿½ **Get insights** from AI analysis of workload and schedule
 - âœ… **Track progress** with interactive task completion
-- í²¾ **Save & share** plans with export/import functionality
+- ï¿½ï¿½ï¿½ **Save & share** plans with export/import functionality
 
 ---
 
 ## âœ¨ Key Features
 
-### í´ **User Authentication System**
+### ï¿½ï¿½ï¿½ **User Authentication System**
 - Secure PIN-based login
 - Personal workspace for each user
 - Auto-save functionality
 - Session persistence
 
-### í¾¯ **Smart Goal Management**
+### ï¿½ï¿½ï¿½ **Smart Goal Management**
 - Add unlimited weekly goals
 - Color-code each goal for visual clarity
 - Goal templates and suggestions
 - Priority-based organization
 
-### í´– **AI-Powered Task Generation**
+### ï¿½ï¿½ï¿½ **AI-Powered Task Generation**
 - One-click AI task breakdown
 - Intelligent workload-aware task suggestions
 
-### í³… **Intelligent Task Scheduling**
+### ï¿½ï¿½ï¿½ **Intelligent Task Scheduling**
 - Visual weekly timetable
 - Multi-day task assignment
 - Progress tracking
 
-### í·  **AI Insights**
+### ï¿½ï¿½ï¿½ **AI Insights**
 - Workload balance analysis
 - Productivity recommendations
 
 ---
 
-## í¿—ï¸ Tech Stack
+## ï¿½ï¿½ï¿½ï¸ Tech Stack
 - HTML5
 - CSS3
 - JavaScript (Vanilla)
@@ -57,6 +57,5 @@ The **AI Weekly Focus Planner** is a next-generation productivity tool built for
 
 ---
 
-## í³ License
+## ï¿½ï¿½ï¿½ License
 MIT License Â© 2025 Ritik Chaudhary
-

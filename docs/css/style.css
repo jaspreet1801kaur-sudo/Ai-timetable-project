@@ -1362,3 +1362,164 @@ button:disabled {
     page-break-inside: avoid;
   }
 }
+
+
+/* Add these at the end of your existing style.css */
+
+/* AI Status Banner */
+.ai-status-banner {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  animation: slideDown 0.3s ease;
+}
+
+.status-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.status-icon {
+  font-size: 1.2rem;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge.status-success {
+  background: var(--success);
+  color: #000;
+}
+
+.status-badge.status-warning {
+  background: var(--warning);
+  color: #000;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Enhanced Slide Headers */
+.slide-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.slide-number {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary), #22d3ee);
+  color: #000;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+/* Info Cards */
+.info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.info-content {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Enhanced Empty States */
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+/* Goal Task Box Enhanced */
+.goal-task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ai-badge {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Enhanced Analytics Stats */
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+/* Auth Icon */
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+/* Enhanced Plan Header */
+.reward-icon,
+.punishment-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.reward-display,
+.punishment-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.reward-display p,
+.punishment-display p {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 20px;
+}
+
+.loading-state p {
+  color: var(--text-secondary);
+}

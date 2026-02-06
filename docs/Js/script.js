@@ -1,3 +1,8 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+/* ==================== CONFIGURATION ==================== */
+const API_URL = 'http://localhost:5000/api';
+
 /* ==================== GLOBAL STATE ==================== */
 let slide = 0;
 const slides = document.querySelectorAll(".slide");
@@ -12,8 +17,70 @@ let taskCompletionData = {
   history: {}
 };
 
+let aiStatus = {
+  mode: 'unknown',
+  lastCall: null,
+  callsCount: 0
+};
+
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const fullDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+/* ==================== AI STATUS MANAGEMENT ==================== */
+function updateAIStatus(mode) {
+  aiStatus.mode = mode;
+  const banner = document.getElementById("aiStatusBanner");
+  const modeText = document.getElementById("aiModeText");
+  const modeBadge = document.getElementById("aiModeBadge");
+  
+  if (currentUser && slide > 0) {
+    banner.style.display = "block";
+    
+    if (mode === 'ai') {
+      modeText.textContent = "AI Active";
+      modeBadge.textContent = "Connected";
+      modeBadge.className = "status-badge status-success";
+    } else if (mode === 'fallback') {
+      modeText.textContent = "Fallback Mode";
+      modeBadge.textContent = "AI Unavailable";
+      modeBadge.className = "status-badge status-warning";
+    }
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+/* ==================== BACKEND API CALLS ==================== */
+async function callAI(endpoint, data) {
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    if (result.success && result.data) {
+      aiStatus.lastCall = new Date();
+      aiStatus.callsCount++;
+      updateAIStatus('ai');
+      return { success: true, data: result.data, meta: result.meta };
+    } else {
+      throw new Error('Invalid API response');
+    }
+  } catch (error) {
+    console.error('AI API Error:', error);
+    updateAIStatus('fallback');
+    return { success: false, error: error.message };
+  }
+}
 
 /* ==================== UI NAVIGATION ==================== */
 function updateUI() {
@@ -25,6 +92,8 @@ function updateUI() {
     document.getElementById("userProfile").style.display = "flex";
     document.getElementById("userNameDisplay").textContent = currentUser.username || currentUser.name;
     
+    updateAIStatus(aiStatus.mode);
+    
     if (currentUser.avatar) {
       const avatar = document.getElementById("userAvatar");
       if (avatar) {
@@ -32,6 +101,9 @@ function updateUI() {
         avatar.style.display = "block";
       }
     }
+  } else {
+    document.getElementById("userProfile").style.display = "none";
+    document.getElementById("aiStatusBanner").style.display = "none";
   }
 }
 
@@ -137,6 +209,7 @@ document.getElementById("createBtn").addEventListener("click", function() {
   localStorage.setItem("lastUser", username);
   
   currentUser = user;
+  updateAIStatus('unknown');
   showNotification("Account created successfully! 🎉", "success");
   
   slide = 1;
@@ -159,13 +232,13 @@ document.getElementById("loginBtn").addEventListener("click", function() {
   localStorage.setItem("lastUser", username);
   loadSavedPlan();
   
+  updateAIStatus('unknown');
   showNotification(`Welcome back, ${user.name}! 👋`, "success");
   
   slide = 1;
   updateUI();
 });
 
-// Auto-login last user
 window.addEventListener("load", function() {
   const lastUser = localStorage.getItem("lastUser");
   if (lastUser) {
@@ -216,6 +289,10 @@ if (avatarUpload) {
   avatarUpload.addEventListener("change", function(e) {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5000000) {
+        showNotification("Image size must be less than 5MB", "error");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = function(event) {
         const avatarData = event.target.result;
@@ -430,7 +507,8 @@ function renderGoals() {
   if (goals.length === 0) {
     goalsDiv.innerHTML = `
       <div class="empty-state">
-        <p>📝 No goals yet. Add your first goal to get started!</p>
+        <div class="empty-icon">📝</div>
+        <p>No goals yet. Add your first goal to get started!</p>
       </div>
     `;
     return;
@@ -456,73 +534,153 @@ window.removeGoal = function(index) {
   }
 }
 
-/* ==================== TASKS AREA (IMPORTANT) ==================== */
+/* ==================== TASKS AREA (AI ENHANCED) ==================== */
 function renderTasksArea() {
   const tasksArea = document.getElementById("tasksArea");
 
+  if (goals.length === 0) {
+    tasksArea.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>Add some goals first to see task options here.</p>
+      </div>
+    `;
+    return;
+  }
+
   tasksArea.innerHTML = goals.map((goal, index) => `
     <div class="goal-task-box">
-      <h3 style="color:${goal.color}">${goal.name}</h3>
+      <div class="goal-task-header">
+        <h3 style="color:${goal.color}">${goal.name}</h3>
+        <span class="ai-badge">✨ AI Powered</span>
+      </div>
 
-      <button id="aiBtn${index}" onclick="generateTasksWithAI(${index})">
-        ✨ Generate Tasks with AI
+      <button class="ai-generate-btn" onclick="generateTasksWithAI(${index})">
+        <span class="btn-icon">🤖</span>
+        Generate Smart Tasks with AI
       </button>
 
-      <div id="aiStatus${index}"></div>
-      <div id="aiTasks${index}"></div>
+      <div id="aiStatus${index}" class="ai-status"></div>
+      <div id="aiTasks${index}" class="ai-tasks-list"></div>
 
-      <textarea id="tasks${index}" rows="5"
-        placeholder="Add tasks manually (one per line)"></textarea>
+      <div class="manual-tasks-input">
+        <label>Or add tasks manually (one per line):</label>
+        <textarea id="tasks${index}" rows="5"
+          placeholder="• Study core concepts&#10;• Complete practice exercises&#10;• Review and take notes"></textarea>
+      </div>
     </div>
   `).join("");
 }
 
-/* ==================== AI TASK GENERATION ==================== */
-window.generateTasksWithAI = function(index) {
+/* ==================== AI TASK GENERATION (OPTION A - REAL BACKEND) ==================== */
+window.generateTasksWithAI = async function(index) {
   const goal = goals[index];
   const status = document.getElementById(`aiStatus${index}`);
   const list = document.getElementById(`aiTasks${index}`);
-  const btn = document.getElementById(`aiBtn${index}`);
+  const btn = event.target;
 
   btn.disabled = true;
-  status.innerHTML = "🤖 Thinking...";
+  status.innerHTML = `
+    <div class="ai-loading">
+      <div class="spinner"></div>
+      <span>🤖 AI is analyzing your goal and generating smart tasks...</span>
+    </div>
+  `;
 
-  setTimeout(() => {
-    const tasks = generateSmartTasks(goal.name);
-    list.innerHTML = tasks.map((t, i) => `
-      <div onclick="addAITaskToManual(${index}, '${t.replace(/'/g,"\\'")}', ${i})">
-        ➕ ${t}
+  const result = await callAI('/ai/generate-tasks', {
+    goal: goal.name,
+    timePerDay: "2 hours",
+    currentLevel: "intermediate"
+  });
+
+  if (result.success && result.data.tasks) {
+    const tasks = result.data.tasks;
+    
+    list.innerHTML = tasks.map((task, i) => `
+      <div class="ai-task-item" onclick="addAITaskToManual(${index}, '${task.replace(/'/g,"\\'")}', ${i})">
+        <span>➕</span>
+        <span>${task}</span>
       </div>
     `).join("");
-    status.innerHTML = "✅ Tasks ready";
-    btn.disabled = false;
-  }, 1000);
+    
+    status.innerHTML = `
+      <div class="ai-success">
+        <span>✅</span>
+        <span>AI generated ${tasks.length} smart tasks! Click to add them.</span>
+      </div>
+    `;
+    
+    showNotification("AI tasks generated successfully! 🎉", "success");
+  } else {
+    const fallbackTasks = generateFallbackTasks(goal.name);
+    
+    list.innerHTML = fallbackTasks.map((task, i) => `
+      <div class="ai-task-item" onclick="addAITaskToManual(${index}, '${task.replace(/'/g,"\\'")}', ${i})">
+        <span>➕</span>
+        <span>${task}</span>
+      </div>
+    `).join("");
+    
+    status.innerHTML = `
+      <div class="ai-error">
+        <span>⚠️</span>
+        <span>AI unavailable. Using smart fallback suggestions instead.</span>
+      </div>
+    `;
+    
+    showNotification("Using fallback mode - AI service unavailable", "info");
+  }
+  
+  btn.disabled = false;
 };
 
-function generateSmartTasks(goal) {
-  const g = goal.toLowerCase();
-  if (g.includes("dsa")) {
+function generateFallbackTasks(goalName) {
+  const g = goalName.toLowerCase();
+  
+  if (g.includes("dsa") || g.includes("data structure") || g.includes("algorithm")) {
     return [
-      "Study arrays for 30 mins",
-      "Solve 5 array problems",
-      "Learn linked lists for 30 mins",
-      "Solve 3 linked list problems",
-      "Review mistakes"
+      "Study core data structures for 30 mins",
+      "Solve 5 practice problems on arrays",
+      "Learn about linked lists for 45 mins",
+      "Complete 3 coding challenges",
+      "Review and document solutions for 20 mins"
     ];
   }
+  
+  if (g.includes("math") || g.includes("calculus") || g.includes("algebra")) {
+    return [
+      "Review fundamental concepts for 30 mins",
+      "Solve 10 practice problems for 45 mins",
+      "Watch tutorial videos for 20 mins",
+      "Complete homework assignments",
+      "Create summary notes for 15 mins"
+    ];
+  }
+  
   return [
-    `Understand basics of ${goal}`,
-    `Practice related problems`,
-    `Revise notes`,
-    `Work on challenging task`,
-    `Plan next steps`
+    `Understand basics of ${goalName} for 30 mins`,
+    `Read related materials for 45 mins`,
+    `Practice exercises for 1 hour`,
+    `Review and take notes for 25 mins`,
+    `Complete challenging tasks for 40 mins`
   ];
 }
 
-window.addAITaskToManual = function(index, task) {
-  const t = document.getElementById(`tasks${index}`);
-  t.value += (t.value ? "\n" : "") + task;
-  showNotification("Task added", "success");
+window.addAITaskToManual = function(index, task, taskIndex) {
+  const textarea = document.getElementById(`tasks${index}`);
+  const taskItem = event.currentTarget;
+  
+  if (taskItem.classList.contains('selected')) {
+    const currentTasks = textarea.value.split('\n').filter(t => t.trim());
+    const newTasks = currentTasks.filter(t => !t.includes(task));
+    textarea.value = newTasks.join('\n');
+    taskItem.classList.remove('selected');
+    showNotification("Task removed", "info");
+  } else {
+    textarea.value += (textarea.value ? "\n" : "") + task;
+    taskItem.classList.add('selected');
+    showNotification("Task added to your list! ✅", "success");
+  }
 };
 
 /* ==================== BATCHING ==================== */
@@ -550,7 +708,8 @@ function renderBatching() {
   if (allTasks.length === 0) {
     batchArea.innerHTML = `
       <div class="empty-state">
-        <p>📋 No tasks found. Go back and add tasks to your goals.</p>
+        <div class="empty-icon">📅</div>
+        <p>No tasks found. Go back and add tasks to your goals.</p>
       </div>
     `;
     return;
@@ -780,7 +939,8 @@ document.getElementById("exportBtn").addEventListener("click", function() {
     user: currentUser.name,
     goals,
     tasks: allTasks,
-    plan: weeklyPlan
+    plan: weeklyPlan,
+    aiStatus
   }, null, 2);
   
   const dataBlob = new Blob([dataStr], { type: "application/json" });
@@ -794,34 +954,38 @@ document.getElementById("exportBtn").addEventListener("click", function() {
 });
 
 document.getElementById("importBtn").addEventListener("click", function() {
-  document.getElementById("importFile").click();
+  const fileInput = document.getElementById("importFile");
+  fileInput.click();
 });
 
-document.getElementById("importFile").addEventListener("change", function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    try {
-      const data = JSON.parse(event.target.result);
-      goals = data.goals || [];
-      allTasks = data.tasks || [];
-      weeklyPlan = data.plan;
-      
-      saveProgress();
-      showNotification("Plan imported! 📤", "success");
-      
-      if (slide === 2) renderGoals();
-      if (slide === 3) renderTasksArea();
-      if (slide === 4) renderBatching();
-      if (slide === 6) renderTimetable();
-    } catch (err) {
-      showNotification("Invalid file format", "error");
-    }
-  };
-  reader.readAsText(file);
-});
+const importFileInput = document.getElementById("importFile");
+if (importFileInput) {
+  importFileInput.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      try {
+        const data = JSON.parse(event.target.result);
+        goals = data.goals || [];
+        allTasks = data.tasks || [];
+        weeklyPlan = data.plan;
+        
+        saveProgress();
+        showNotification("Plan imported! 📤", "success");
+        
+        if (slide === 2) renderGoals();
+        if (slide === 3) renderTasksArea();
+        if (slide === 4) renderBatching();
+        if (slide === 6) renderTimetable();
+      } catch (err) {
+        showNotification("Invalid file format", "error");
+      }
+    };
+    reader.readAsText(file);
+  });
+}
 
 document.getElementById("printBtn").addEventListener("click", function() {
   window.print();
@@ -849,6 +1013,7 @@ document.getElementById("logoutBtn").addEventListener("click", function() {
   if (confirm("Are you sure you want to logout?")) {
     saveProgress();
     currentUser = null;
+    aiStatus = { mode: 'unknown', lastCall: null, callsCount: 0 };
     slide = 0;
     updateUI();
     showNotification("Logged out successfully", "info");
@@ -904,3 +1069,5 @@ document.getElementById("generateBtn").addEventListener("click", generatePlan);
 
 /* ==================== INITIALIZE ==================== */
 updateUI();
+
+});
